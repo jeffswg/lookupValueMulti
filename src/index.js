@@ -17,6 +17,7 @@ export const App = ({sdk}) => {
   const [value, setValue] = useState(sdk.field.getValue() || [{ value: 'aaa', label: 'aaa' }]);
   const [lktype,setLktype] = useState(sdk.parameters.instance.lookupContentType);
   const [lkfield,setLkfield] = useState(sdk.parameters.instance.lookupContentField); //useState(sdk.field.id);//when ready use thie one
+  const [lkmulti,setLkmulti] = useState(sdk.parameters.instance.multiSelection);
   const [candies,setCandies]=useState(sdk.field.getValue() ||[{value: 'ccc', label: 'ccc' }]);
   const [lookupvalues, setLookupvalues]=useState([{ value: 'aaa', label: 'aaa' }]);
   
@@ -59,7 +60,7 @@ export const App = ({sdk}) => {
     <div className='jhtext1'>
     <Select 
       options={lookupvalues} 
-      isMulti={true} 
+      isMulti={lkmulti} 
       placeholder={'add ' + sdk.parameters.instance.lookupContentType}
       defaultValue={value} 
       onChange={setCandies} />

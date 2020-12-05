@@ -18,6 +18,12 @@
         "type": "Symbol",
         "name": "Lookup Value Content Field",
         "description": "For which content Field the lookup value is for"
+      },
+      {
+        "id": "multiSelection",
+        "type": "Boolean",
+        "name": "Multiple values or single value",
+        "description": "Yes for multiple values selection. No for single value section"
       }
     ]
   }
