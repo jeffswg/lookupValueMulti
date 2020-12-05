@@ -38,7 +38,9 @@ export const App = ({sdk}) => {
           'fields.lookupOfWhichContentType[all]': lktype,
           'fields.lookupOfWhichField[all]': lkfield
       }).then((response)=>{
-        response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id}));
+        response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id + '|' 
+        + item.fields.lookupValue['en-CA'] 
+        + "|" + item.fields.lookupValue['fr-CA'] }));
         setLookupvalues(lookUpValues.sort((a)=>a.label).reverse());
       })
       .catch((err)=>{
