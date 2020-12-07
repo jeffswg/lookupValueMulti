@@ -27,6 +27,9 @@ export const App = ({sdk}) => {
 
   useEffect(()=>{
     sdk.field.setValue(candies);
+    // if(candies !==undefined && candies.value !==undefined){
+    //   sdk.entry.fields['testReference'].setValue(candies.value);
+    // }    
   },[candies]);
 
   useEffect(() => {
@@ -39,9 +42,12 @@ export const App = ({sdk}) => {
           'fields.lookupOfWhichContentType[all]': lktype,
           'fields.lookupOfWhichField[all]': lkfield
       }).then((response)=>{
-        response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id + '|' 
-        + item.fields.lookupValue['en-CA'] 
-        + "|" + item.fields.lookupValue['fr-CA'] }));
+        // response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id + '|' 
+        // + item.fields.lookupValue['en-CA'] 
+        // + "|" + item.fields.lookupValue['fr-CA'] }));
+        response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:JSON.stringify({sys:{type:'Link',linkType:'Entry',id:item.sys.id}})}));
+        //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:{sys:{type:'Link',linkType:'Entry',id:item.sys.id}},key:item.sys.id}));
+        //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id}));
         setLookupvalues(lookUpValues.sort((a)=>a.label).reverse());
       })
       .catch((err)=>{
