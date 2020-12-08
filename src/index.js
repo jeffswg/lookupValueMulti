@@ -80,7 +80,7 @@ export const App = ({sdk}) => {
         response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:JSON.stringify({sys:{type:'Link',linkType:'Entry',id:item.sys.id}})}));
         //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:{sys:{type:'Link',linkType:'Entry',id:item.sys.id}},key:item.sys.id}));
         //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id}));
-        setLookupvalues(lookUpValues.sort((a,b)=>(a.label>b.label)?1:((b.label>a.label)?-1:0)));
+        setLookupvalues(lookUpValues.sort((a,b)=>(a.label.toLowerCase()>b.label.toLowerCase())?1:((b.label.toLowerCase()>a.label.toLowerCase())?-1:0))); //be aware that it is case sensitive
       })
       .catch((err)=>{
         console.log(err);
