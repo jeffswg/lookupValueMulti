@@ -48,8 +48,7 @@ export const App = ({sdk}) => {
           sdk.field.setValue(jCandies);
         } else {
           sdk.field.setValue(candies);
-        }
-        
+        }        
       } else {
         if (isJsonParsable(candies.value)){
           sdk.field.setValue({label:candies.label,value: JSON.parse(candies.value)});
@@ -81,7 +80,7 @@ export const App = ({sdk}) => {
         response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:JSON.stringify({sys:{type:'Link',linkType:'Entry',id:item.sys.id}})}));
         //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:{sys:{type:'Link',linkType:'Entry',id:item.sys.id}},key:item.sys.id}));
         //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id}));
-        setLookupvalues(lookUpValues.sort((a)=>a.label).reverse());
+        setLookupvalues(lookUpValues.sort((a,b)=>(a.label>b.label)?1:((b.label>a.label)?-1:0)));
       })
       .catch((err)=>{
         console.log(err);
