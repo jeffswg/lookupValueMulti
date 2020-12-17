@@ -6,62 +6,38 @@ import { init } from 'contentful-ui-extensions-sdk';
 import '@contentful/forma-36-react-components/dist/styles.css';
 import './index.css';
 
-const lookupOps =[
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-];
-const isJsonParsable = string => {
-  try {
-      JSON.parse(string);
-  } catch (e) {
-      return false;
-  }
-  return true;
-}
-
+const isJson=str=>{try {JSON.parse(str);} catch (e) {return false;}return true;};
 
 export const App = ({sdk}) => {
-  const [ctvalue, setCtValue] = useState(sdk.field.getValue());
+  const [value, setValue] = useState(sdk.field.getValue() || []);
   const [lktype,setLktype] = useState(sdk.parameters.instance.lookupContentType);
   const [lkfield,setLkfield] = useState(sdk.parameters.instance.lookupContentField); //useState(sdk.field.id);//when ready use thie one
   const [lkmulti,setLkmulti] = useState(sdk.parameters.instance.multiSelection);
-  const [candies,setCandies]=useState(ctvalue);
-  const [lookupvalues, setLookupvalues]=useState([{ value: 'aaa', label: 'aaa' }]);
+  const [nativeField,setNativeField] = useState(sdk.parameters.instance.lookupActualField);
+  const [candies,setCandies]=useState(sdk.field.getValue() ||[]);
+  const [lookupvalues, setLookupvalues]=useState([]);
   
   const onExternalChange = value => {
-    setCtValue(value);
+    setValue(value)
   }
 
   useEffect(()=>{
-    if(candies){
-      if(lkmulti){
-        if(Array.isArray(candies)){
-          const jCandies=[];
-          candies.map(c=>{
-            if(isJsonParsable(c.value)) {
-              return jCandies.push({label: c.label, value: JSON.parse(c.value)})
-            } else {
-              jCandies.push({label: c.label, value: c.value})
-            }            
-          });
-          sdk.field.setValue(jCandies);
-        } else {
-          sdk.field.setValue(candies);
-        }        
-      } else {
-        if (isJsonParsable(candies.value)){
-          sdk.field.setValue({label:candies.label,value: JSON.parse(candies.value)});
-        } else {
-          sdk.field.setValue({label:candies.label,value: candies.value});
-        }
-      }
+    const selectedVals=[];
+    if(candies !==undefined && Array.isArray(candies)){
+      candies.map((m)=>{if(isJson(m.value)) {return selectedVals.push(JSON.parse(m.value))}})
+      //console.log(selectedVals);
     }
-    //sdk.field.setValue(candies);
     
-    // if(candies !==undefined && candies.value !==undefined){
-    //   sdk.entry.fields['testReference'].setValue(candies.value);
-    // }    
+    sdk.field.setValue(candies);
+    if(lkmulti){
+      if(candies !==undefined && selectedVals !==undefined && selectedVals.length>=0){
+        sdk.entry.fields[nativeField].setValue(selectedVals);
+      }
+    } else {
+      if(candies !==undefined && candies !==null && candies.value !==undefined && candies !==null && isJson(candies.value)){
+        sdk.entry.fields[nativeField].setValue(JSON.parse(candies.value));
+      }      
+    } 
   },[candies]);
 
   useEffect(() => {
@@ -78,8 +54,6 @@ export const App = ({sdk}) => {
         // + item.fields.lookupValue['en-CA'] 
         // + "|" + item.fields.lookupValue['fr-CA'] }));
         response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:JSON.stringify({sys:{type:'Link',linkType:'Entry',id:item.sys.id}})}));
-        //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:{sys:{type:'Link',linkType:'Entry',id:item.sys.id}},key:item.sys.id}));
-        //response.items.map((item)=>lookUpValues.push({label:item.fields.lookupValue['en-CA'],value:item.sys.id}));
         setLookupvalues(lookUpValues.sort((a,b)=>(a.label.toLowerCase()>b.label.toLowerCase())?1:((b.label.toLowerCase()>a.label.toLowerCase())?-1:0))); //be aware that it is case sensitive
       })
       .catch((err)=>{
@@ -94,27 +68,13 @@ export const App = ({sdk}) => {
     return detatchValueChangeHandler;
   });
 
-  if(lkmulti){
-    return (
-      <div className='jhtext1'>
-      <Select 
-        options={lookupvalues} 
-        isMulti={lkmulti} 
-        placeholder={'add ' + lkfield}
-        defaultValue={
-          ctvalue && ctvalue.map(v=>{return{value:JSON.stringify(v.value),label:v.label}})
-        } 
-        onChange={setCandies} />
-      </div>
-    );
-  }
   return (
     <div className='jhtext1'>
     <Select 
       options={lookupvalues} 
       isMulti={lkmulti} 
       placeholder={'add ' + lkfield}
-      defaultValue={ctvalue && {label:ctvalue.label,value: JSON.stringify(ctvalue.value)}} 
+      defaultValue={value} 
       onChange={setCandies} />
     </div>
   );

@@ -20,6 +20,12 @@
         "description": "For which content Field the lookup value is for"
       },
       {
+        "id": "lookupActualField",
+        "type": "Symbol",
+        "name": "Contentful Native Field of the lookup",
+        "description": "For which native field this selection box is for"
+      },
+      {
         "id": "multiSelection",
         "type": "Boolean",
         "name": "Multiple values or single value",
